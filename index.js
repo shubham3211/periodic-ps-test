@@ -3,6 +3,10 @@ if ("serviceWorker" in navigator) {
 }
 
 const periodicSync = async () => {
+  const status = await navigator.permissions.query({
+    name: "periodic-background-sync",
+  });
+  console.log(`status`, status);
   Notification.requestPermission().then((p) => {
     if (p === "granted") {
       navigator.serviceWorker.ready.then(async (reg) => {
@@ -13,7 +17,7 @@ const periodicSync = async () => {
           const registration = await navigator.serviceWorker.ready;
           try {
             await registration.periodicSync.register("ps-1", {
-              minInterval: 1000,
+              minInterval: 1000 * 60,
             });
           } catch (error) {
             console.log(`error`, error);
