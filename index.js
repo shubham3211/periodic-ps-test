@@ -1,17 +1,27 @@
-navigator.serviceWorker.register("/sw.js");
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js");
+}
 
 const periodicSync = async () => {
-  const permission = Notification.permission;
   Notification.requestPermission().then((p) => {
     if (p === "granted") {
-      navigator.serviceWorker.ready
-        .then((reg) => {
-          reg.periodicSync.register("ps", {
-            minInterval: 15 * 60 * 1000,
-          });
-        })
-        .then(console.log)
-        .catch(console.log);
+      navigator.serviceWorker.ready.then(async (reg) => {
+        const status = await navigator.permissions.query({
+          name: "periodic-background-sync",
+        });
+        if (status.state === "granted") {
+          const registration = await navigator.serviceWorker.ready;
+          try {
+            await registration.periodicSync.register("ps-1", {
+              minInterval: 1000,
+            });
+          } catch (error) {
+            console.log(`error`, error);
+          }
+        } else {
+          console.log("No periodic sync permission");
+        }
+      });
     }
   });
 };
