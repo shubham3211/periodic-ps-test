@@ -17,7 +17,7 @@ const periodicSync = async () => {
           const registration = await navigator.serviceWorker.ready;
           try {
             await registration.periodicSync.register("ps-1", {
-              minInterval: 1000 * 60,
+              minInterval: 1000 * 60 * 3,
             });
           } catch (error) {
             console.log(`error`, error);
